@@ -2,7 +2,7 @@ import requests
 import json
 import os
 import asyncio
-from app.models import ChatCompletionRequest, Message  # 相对导入
+from app.models import ChatCompletionRequest, Message, TextContent, ImageContent  # 添加 TextContent 和 ImageContent 的导入
 from dataclasses import dataclass
 from typing import Optional, Dict, Any, List
 import httpx
@@ -227,10 +227,10 @@ class GeminiClient:
             elif isinstance(content, list):
                 parts = []
                 for item in content:
-                    if item.get('type') == 'text':
-                        parts.append({"text": item.get('text')})
-                    elif item.get('type') == 'image_url':
-                        image_data = item.get('image_url', {}).get('url', '')
+                    if isinstance(item, TextContent):
+                        parts.append({"text": item.text})
+                    elif isinstance(item, ImageContent):
+                        image_data = item.image_url if isinstance(item.image_url, str) else item.image_url.get('url', '')
                         if image_data.startswith('data:image/'):
                             try:
                                 mime_type, base64_data = image_data.split(';')[0].split(':')[1], image_data.split(',')[1]

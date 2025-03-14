@@ -1,9 +1,17 @@
 from typing import List, Dict, Optional, Union, Literal
 from pydantic import BaseModel, Field
 
+class TextContent(BaseModel):
+    type: Literal["text"]
+    text: str
+
+class ImageContent(BaseModel):
+    type: Literal["image_url"]
+    image_url: Union[str, Dict[str, str]]
+
 class Message(BaseModel):
     role: str
-    content: str
+    content: Union[str, List[Union[TextContent, ImageContent]]]
 
 class ChatCompletionRequest(BaseModel):
     model: str
